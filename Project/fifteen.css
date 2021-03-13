@@ -1,0 +1,30 @@
+h1, p, #permutation {
+	text-align: center;
+}
+
+.puzzle, .empty {
+	width: 98px;
+	height: 98px;
+	position: absolute;
+}
+
+.puzzle {
+	border: 2px solid black;
+	background-image: url("background.jpg");
+}
+
+.movable:hover{
+	border-color: red;
+	cursor: pointer;
+}
+
+#puzzlearea {
+	position: relative;
+	width: 400px;
+	height: 400px;
+	margin: 0 auto;
+}
+
+* {
+	font: cursive;
+}
