@@ -2,11 +2,25 @@
 	"use strict";
 	var empty_x = 3;
 	var empty_y = 3;
+	var logStack = [];
 	// attaches a function to the calculate button
 	window.onload = function () {
 		addBlocks();
 		document.getElementById("shufflebutton").onclick = shuffle;
 		calcPermuation();
+		document.addEventListener("keypress", event => {
+			var log = document.getElementById("log");
+			var inverseLog = document.getElementById("inverseLog")
+			if (event.keyCode === 99) {
+				log.innerHTML = "";
+				inverseLog.innerHTML = "";
+				logStack.splice(0,logStack.length);		// empty log stack 
+			}
+			if (event.keyCode === 32) {
+				log.innerHTML = log.innerHTML + " ";
+				inverseLog.innerHTML = inverseLog.innerHTML + " ";
+			}
+		});
 	};
 
 	function addBlocks () {
@@ -68,11 +82,59 @@
 			puzzle.style.left = tempx;
 			puzzle.style.top = tempy;
 			calcPermuation();
+			addLog(puzzle);
+		}
+	}
+
+	function addLog(puzzle) {
+		var direction = "";
+		var inverseDirection = "";
+		var empty = document.querySelector(".empty")
+		if (puzzle.style.top == empty.style.top) {
+			if (puzzle.style.left > empty.style.left) {
+				direction = "R";
+				inverseDirection = "L";
+			}
+			else {
+				direction = "L";
+				inverseDirection = "R";
+			}
+		}
+		else {
+			if (puzzle.style.top > empty.style.top) {
+				direction = "D";
+				inverseDirection = "U";
+			}
+			else {
+				direction = "U"
+				inverseDirection = "D";
+			}
+		}
+		var log = document.getElementById("log")
+		var inverseLog = document.getElementById("inverseLog")
+		log.innerHTML = log.innerHTML + direction;
+		inverseLog.innerHTML = inverseLog.innerHTML + inverseDirection;
+		logStack.push(direction);
+	}
+
+	function shuffleMovePuzzle(puzzle) {
+		if (isMovablePuzzle(puzzle.id)) {
+			var empty = document.querySelector(".empty");
+			empty.id = puzzle.id;
+			puzzle.id = "puzzle" + empty_x + "_" + empty_y;
+			var tempx = empty_x * 100 + "px";
+			var tempy = empty_y * 100 + "px";
+			empty_x = parseInt(puzzle.style.left) / 100;
+			empty_y = parseInt(puzzle.style.top) / 100;
+			empty.style.left = puzzle.style.left;
+			empty.style.top = puzzle.style.top;
+			puzzle.style.left = tempx;
+			puzzle.style.top = tempy;
 		}
 	}
 
 	function shuffle() {
-		for (var i = 1000; i >= 0; i--) {
+		for (var i = 150; i >= 0; i--) {
 			var neighbors = [];
 			var empty_neighbors = ["puzzle" + (empty_x - 1) + "_" + empty_y,
 							 "puzzle" + empty_x  + "_" + (empty_y - 1),
@@ -85,7 +147,7 @@
 				}
 			}
 			var puzzleToMove = neighbors[parseInt(Math.random() * neighbors.length)];
-			movePuzzle(puzzleToMove);
+			shuffleMovePuzzle(puzzleToMove);
 		}
 	}
 
