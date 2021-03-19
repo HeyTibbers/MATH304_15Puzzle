@@ -1,4 +1,4 @@
-h1, p, #permutation, #log, #inverseLog {
+h1, p, button, #permutation, #log, #inverseLog, #move_log {
 	text-align: center;
 }
 
@@ -27,4 +27,5 @@ h1, p, #permutation, #log, #inverseLog {
 
 * {
 	font: cursive;
+	text-align: center;
 }
