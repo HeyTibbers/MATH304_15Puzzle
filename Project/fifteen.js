@@ -126,7 +126,7 @@
 			var log = document.getElementById("log")
 			var inverseLog = document.getElementById("inverseLog")
 			log.innerHTML = log.innerHTML + direction;
-			inverseLog.innerHTML = inverseLog.innerHTML + inverseDirection;
+			inverseLog.innerHTML = inverseDirection + inverseLog.innerHTML;
 		}
 	}
 
