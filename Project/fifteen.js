@@ -9,7 +9,7 @@
 		addBlocks();
 		document.getElementById("shufflebutton").onclick = shuffle;
 		calcPermuation();
-		document.getElementById("Move_log").onclick = function() {
+		document.getElementById("move_log").onclick = function() {
 			if (logOn == false) {
 				logOn = true;
 			}
