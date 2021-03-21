@@ -1,4 +1,4 @@
-(function() {	
+(function() {
 	"use strict";
 	var empty_x = 3;
 	var empty_y = 3;
@@ -33,6 +33,8 @@
 		});
 	};
 
+	// Initialization
+	// Add tiles to the board
 	function addBlocks () {
 		var container = document.getElementById("puzzlearea");
 		for (var i = 0; i <= 14; i++) {
@@ -130,56 +132,94 @@
 		}
 	}
 
-	function shuffleMovePuzzle(puzzle) {
-		if (isMovablePuzzle(puzzle.id)) {
-			var empty = document.querySelector(".empty");
-			empty.id = puzzle.id;
-			puzzle.id = "puzzle" + empty_x + "_" + empty_y;
-			var tempx = empty_x * 100 + "px";
-			var tempy = empty_y * 100 + "px";
-			empty_x = parseInt(puzzle.style.left) / 100;
-			empty_y = parseInt(puzzle.style.top) / 100;
-			empty.style.left = puzzle.style.left;
-			empty.style.top = puzzle.style.top;
-			puzzle.style.left = tempx;
-			puzzle.style.top = tempy;
-		}
-	}
-
 	function shuffle() {
-		logStack.splice(0,logStack.length);		// empty log stack 
+		// Clear out the log stack
+		logStack.splice(0, logStack.length)
 
-		for (var i = 150; i >= 0; i--) {
-			var neighbors = [];
-			var empty_neighbors = ["puzzle" + (empty_x - 1) + "_" + empty_y,
-							 "puzzle" + empty_x  + "_" + (empty_y - 1),
-							 "puzzle" + (empty_x + 1) + "_" + empty_y,
-							 "puzzle" + empty_x + "_" + (empty_y + 1)];
-			for (var j = empty_neighbors.length - 1; j >= 0; j--) {
-				var puzzle = document.getElementById(empty_neighbors[j]);
-				if (puzzle != null && isMovablePuzzle(empty_neighbors[j])) {
-					neighbors.push(puzzle);
-				}
-			}
-			var puzzleToMove = neighbors[parseInt(Math.random() * neighbors.length)];
-			shuffleMovePuzzle(puzzleToMove);
+		let permutation = {}	// Permutation of the puzzle
+		let tiles = []			// Tiles to be used
+		let boxes = []			// Available boxes
+		for (let i = 0; i < 16; i++) {
+			permutation[i] = i
+			tiles.push(i)
+			boxes.push(i)
 		}
 
-		/*var random_id = "";
-		var puzzle_id = ["0_0", "0_1", "0_2", "0_3",
-						 "1_0", "1_1", "1_2", "1_3", 
-						 "2_0", "2_1", "2_2", "2_3", 
-						 "3_0", "3_1", "3_2", "3_3"];
-		for (var i = 0; i <= 15; i++) {
-			random_id = puzzle_id[parseInt(Math.random() * puzzle_id.length)];
-			puzzle_id.splice(puzzle_id.indexOf(random_id), 1);
-			console.log(random_id);
-			console.log(puzzle_id);
-			document.getElementById("puzzle" + random_id).style.left = (i % 4) * 100 + "px";
-			document.getElementById("puzzle" + random_id).style.top = Math.floor(i / 4) * 100 + "px";
-			document.getElementById("puzzle" + random_id).id = "puzzle" + (i % 4).toString() + "_" + Math.floor(i / 4).toString();
-			console.log((i % 4), Math.floor(i / 4));
-		}*/
+		// Put the first 14 tiles randomly into the boxes
+		for (let i = 0; i < 14; i++) {
+			// Take the first tile, and remove it from the array
+			let tileNum = tiles.shift()
+
+			// Ramdonly select a box
+			let boxNum = boxes[Math.floor(Math.random() * boxes.length)]
+
+			// Remove the box from the array
+			// i.e., mark it as unavailable
+			boxes.splice(boxes.indexOf(boxNum), 1)
+
+			// Put the tile into the ramdonly selected box
+			let box = document.getElementById("puzzlearea").children[boxNum]
+			permutation[boxNum] = tileNum	// Update permutation
+			// Update the graphical representation
+			box.id = num2puzzleID(tileNum)
+			box.style.backgroundPositionX = -(tileNum % 4) * 100 + "px"
+			box.style.backgroundPositionY = -Math.floor(tileNum / 4) * 100 + "px"
+			box.className = "puzzle"
+		}
+
+		// For the 15th tile, we put it into one of the two remaining
+		// available boxes based on solvability of the puzzle.
+		permutation[boxes[0]] = tiles[0]
+		permutation[boxes[1]] = tiles[1]
+		let tileNum = tiles.shift()	// The final non-empty tile (i.e., tile 15)
+		let box = document.getElementById("puzzlearea").children[boxes[0]]
+		if (isEven(permutation)) {	// Solvable
+			// Put the final non-empty tile into the FIRST available box
+			console.log("Even")
+			// Take the first available box
+			box = document.getElementById("puzzlearea").children[boxes[0]]
+			boxes.shift()	// Pop out the occupied box
+		} else {	// Odd permutation -- not solvable in the current setting
+			// Put the final non-empty tile into the SECOND available 
+			// box to make it an even permutation.
+			console.log("Odd")
+			// Take the second available box
+			box = document.getElementById("puzzlearea").children[boxes[1]]
+			boxes.pop()		// Pop out the occupied box
+		}
+		// Update the graphical representation
+		box.id = num2puzzleID(tileNum)
+		box.style.backgroundPositionX = -(tileNum % 4) * 100 + "px"
+		box.style.backgroundPositionY = -Math.floor(tileNum / 4) * 100 + "px"
+
+
+		// Lastly, place the empty tile and update the related class names
+		console.log(boxes)
+		tileNum = tiles.shift()
+		box = document.getElementById("puzzlearea").children[boxes[0]]
+		box.id = num2puzzleID(tileNum)
+		box.className = "empty"
+		empty_x = Math.floor(boxes[0] / 4)
+		empty_y = boxes[0] % 4
+
+		// Set tiles around the empty tile to be movable
+		let row = Math.floor(boxes[0] / 4)
+		let col = boxes[0] % 4
+		let tiles_to_check = [
+			[row - 1, col], 
+			[row, col - 1], 
+			[row, col + 1], 
+			[row + 1, col]
+		]
+		console.log(row, col)
+		for (const [r, c] of tiles_to_check) {
+			if (0 <= r && r < 4 && 0 <= c && c < 4) {
+				console.log(r, c)
+				let box = document.getElementById("puzzlearea").children[r * 4 + c]
+				console.log(box)
+				box.onmouseover = isMovable
+			}
+		}
 	}
 
 	function calcPermuation() {
@@ -201,7 +241,7 @@
 			do {
 				counter --;
 				remaining.splice(remaining.indexOf(cur), 1);
-				cur = calcValue(puzzles[cur].id);
+				cur = puzzleID2num(puzzles[cur].id);
 				result += cur + 1 + " ";
 			} while (start != cur)
 			result += ")";
@@ -211,8 +251,54 @@
 		document.getElementById("permutation").innerText = result;
 	}
 
-	function calcValue(id) {
+	// Convert a puzzle id into a 0-indexed number
+	function puzzleID2num(id) {
 		return (parseInt(id.charAt(8))) * 4 + parseInt(id.charAt(6));
+	}
+
+	// Convert a 0-indexed number to a string formated puzzle id
+	function num2puzzleID(num) {
+		let row = Math.floor(num / 4)
+		let col = num % 4
+		return "puzzle" + row.toString() + '_' + col.toString()
+	}
+
+	// Given a permutation in object form, return true if
+	// the permutation is even
+	function isEven(permutation) {
+		/* Use BFS to explore the permutation / map */
+
+		let visited = {}
+		for (let i = 0; i < 16; i++) {
+			visited[i] = false
+		}
+
+		let num_of_2_cycle = 0	// Number of 2-cycles
+		for (let i = 0; i < 16; i++) {
+			if (!visited[i]) {
+				let queue = [i]
+				while (queue.length > 0) {
+					let curr = queue.shift()
+					visited[curr] = true
+					if (!visited[curr]) {
+						queue.push(permutation[curr])
+						num_of_2_cycle++
+					}
+				}
+			}
+		}
+
+		// Testing: if not all nodes are visited, 
+		// it is an invalid permutation
+		if (!Object.values(visited).reduce((x, y) => {
+			return x && y
+		}, true)) {
+			console.log("isEven: Invalid permutation!")
+			console.log(permutation)
+			console.log(visited)
+		}
+
+		return num_of_2_cycle % 2 === 0
 	}
 
 }) ();
