@@ -19,8 +19,7 @@ window.onload = function() {
 	document.getElementById("move_log").onclick = function() {
 		if (logOn == false) {
 			logOn = true;
-		}
-		else {
+		} else {
 			logOn = false;
 			log.innerHTML = "";
 			inverseLog.innerHTML = "";
@@ -91,6 +90,35 @@ function isMovablePuzzle(id) {
 
 	document.getElementById(id).classList.remove("movable")
 	return false
+}
+
+// Move a tile based on a given direction.
+// 'direction' is one of 'R', 'U', 'L', or 'D'
+function moveDirection(direction) {
+	let empty_tile = document.querySelector(".empty")
+	let tile_x, tile_y
+	if (direction === 'R') {
+		tile_x = empty_x
+		tile_y = empty_y - 1
+	} else if (direction === 'U') {
+		tile_x = empty_x + 1
+		tile_y = empty_y
+	} else if (direction === 'L') {
+		tile_x = empty_x
+		tile_y = empty_y + 1
+	} else if (direction === 'D') {
+		tile_x = empty_x - 1
+		tile_y = empty_y
+	} else {
+		console.log("moveDirection: Invalid direction!!")
+		return
+	}
+	if (0 <= tile_x && tile_x < 4 && 0 <= tile_y && tile_y < 4) {
+		let box_id = num2boxID(tile_x * 4 + tile_y)
+		movePuzzle(document.getElementById(box_id).children[0])
+	} else {
+		console.log("Illegal move")
+	}
 }
 
 // Move a given tile
@@ -306,6 +334,11 @@ function boxID2num(id) {
 	return parseInt(id.split('-').pop())
 }
 
+// Convert a 0-indexed number to a string formated box id
+function num2boxID(num) {
+	return "box-" + num
+}
+
 // Given a permutation in object form, return true if
 // the permutation is even
 function isEven(permutation) {
@@ -342,3 +375,5 @@ function isEven(permutation) {
 	}
 	return num_of_2_cycle % 2 === 0
 }
+
+
