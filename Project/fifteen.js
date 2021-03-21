@@ -130,8 +130,8 @@
 			tile_box.appendChild(t2)
 			empty_box.appendChild(t1)
 
-			calcPermuation();
-			addLog(tile);
+			addLog(t1)			// Write move log
+			calcPermuation()	// Update permutation
 		}
 	}
 
@@ -151,18 +151,15 @@
 			if (puzzle.style.left > empty.style.left) {
 				direction = "R";
 				inverseDirection = "L";
-			}
-			else {
+			} else {
 				direction = "L";
 				inverseDirection = "R";
 			}
-		}
-		else {
+		} else {
 			if (puzzle.style.top > empty.style.top) {
 				direction = "D";
 				inverseDirection = "U";
-			}
-			else {
+			} else {
 				direction = "U"
 				inverseDirection = "D";
 			}
@@ -260,7 +257,7 @@
 		let permutation = {}
 
 		for (let i = 0; i < boxes.length; i++) {
-			permutation[boxID2num(boxes[i].id)] = puzzleID2num(boxes[i].lastChild.id)
+			permutation[puzzleID2num(boxes[i].lastChild.id)] = boxID2num(boxes[i].id)
 		}
 
 		// Run BFS to generate the cycle notation
