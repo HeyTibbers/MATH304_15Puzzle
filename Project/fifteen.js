@@ -130,7 +130,7 @@
 			tile_box.appendChild(t2)
 			empty_box.appendChild(t1)
 
-			// calcPermuation();
+			calcPermuation();
 			addLog(tile);
 		}
 	}
@@ -248,36 +248,57 @@
 		box.className = "empty"
 		empty_x = Math.floor(boxes[0] / 4)
 		empty_y = boxes[0] % 4
+
+		calcPermuation()
 	}
 
-	// function calcPermuation() {
-	// 	var list = document.querySelectorAll(".puzzle");
-	// 	var puzzles = [];
-	// 	var remaining = [];
-	// 	for (var i = 0; i < list.length; i++) {
-	// 		puzzles.push(list[i]);
-	// 		remaining.push(i);
-	// 	}
-	// 	remaining.push(15);
-	// 	puzzles.push(document.querySelector(".empty"));
-	// 	var counter = puzzles.length;
-	// 	var start = 0;
-	// 	var cur = start;
-	// 	var result = "";
-	// 	do {
-	// 		result += "( ";
-	// 		do {
-	// 			counter --;
-	// 			remaining.splice(remaining.indexOf(cur), 1);
-	// 			cur = puzzleID2num(puzzles[cur].id);
-	// 			result += cur + 1 + " ";
-	// 		} while (start != cur)
-	// 		result += ")";
-	// 		start = remaining[0];
-	// 		cur = start;
-	// 	} while (counter > 0)
-	// 	document.getElementById("permutation").innerText = result;
-	// }
+	function calcPermuation() {
+		// Select all the boxes
+		// Compare the box id's and the tile id's
+
+		let boxes = document.querySelectorAll(".box")
+		let permutation = {}
+
+		for (let i = 0; i < boxes.length; i++) {
+			permutation[boxID2num(boxes[i].id)] = puzzleID2num(boxes[i].lastChild.id)
+		}
+
+		// Run BFS to generate the cycle notation
+		let visited = {}, results = []
+		for (let i = 0; i < 16; i++) {
+			visited[i] = false
+		}
+		for (let i = 0; i < 16; i++) {
+			if (!visited[i]) {
+				let curr_results = []
+				let queue = [i]
+				while (queue.length > 0) {
+					let curr = queue.shift()
+					curr_results.push(curr)
+					visited[curr] = true
+					if (!visited[permutation[curr]]) {
+						queue.push(permutation[curr])
+					}
+				}
+				// Exclude 1-cycles
+				if (curr_results.length > 1) {
+					results.push(curr_results)
+				}
+			}
+		}
+
+		// For each list in 'results':
+		//     Add 1 to every element to obtain 1-indexed representation
+		//     And then convert them to strings
+		//     Combine those number together and add brackets on both sides
+		results = results.map((lst) => {
+			return '(' + lst.map((x) => {
+				return (x + 1).toString()
+			}).join(', ') + ')'
+		})
+
+		document.getElementById("permutation").innerText = results.join(' ')
+	}
 
 	// Convert a puzzle id into a 0-indexed number
 	function puzzleID2num(id) {
