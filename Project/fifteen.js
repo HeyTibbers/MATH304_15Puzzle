@@ -297,7 +297,11 @@
 			}).join(', ') + ')'
 		})
 
-		document.getElementById("permutation").innerText = results.join(' ')
+		if (results.length === 0) {		// Identity
+			document.getElementById("permutation").innerText = 'Identity'
+		} else {
+			document.getElementById("permutation").innerText = results.join(' ')
+		}
 	}
 
 	// Convert a puzzle id into a 0-indexed number
