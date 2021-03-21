@@ -10,7 +10,7 @@ h1, p, button, #permutation, #log, #inverseLog, #move_log {
 
 .puzzle {
 	border: 2px solid black;
-	background-image: url("background.jpg");
+	background-image: url("../imgs/background.jpg");
 }
 
 .movable:hover{
