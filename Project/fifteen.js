@@ -4,6 +4,7 @@
 	var empty_y = 3;
 	var logStack = [];
 	var logOn = false;
+
 	// attaches a function to the calculate button
 	window.onload = function () {
 		addBlocks();
@@ -35,9 +36,12 @@
 
 	// Initialization
 	// Add tiles to the board
-	function addBlocks () {
+	function addBlocks() {
 		var container = document.getElementById("puzzlearea");
 		for (var i = 0; i <= 14; i++) {
+			let box = document.createElement('div')
+			box.className = 'box'
+			box.id = i.toString()
 			var newDiv = document.createElement("div");
 			newDiv.classList.add("puzzle");
 			newDiv.id = ("puzzle" + i % 4 + "_" + Math.floor(i / 4));
@@ -47,29 +51,46 @@
 			newDiv.style.top = Math.floor(i / 4) * 100 + "px";
 			newDiv.style.backgroundPositionX = -(i % 4) * 100 + "px";
 			newDiv.style.backgroundPositionY = -Math.floor(i / 4) * 100 + "px";
-			container.appendChild(newDiv);
+			box.appendChild(newDiv)
+			container.appendChild(box);
 		}
+		let box = document.createElement('div')
+		box.className = 'box'
+		box.id = i.toString()
 		var newDiv = document.createElement("div");
 		newDiv.classList.add("empty");
 		newDiv.id = ("puzzle" + 3 + "_" + 3);
 		newDiv.style.left = "300px";
 		newDiv.style.top = "300px";
-		container.appendChild(newDiv);
+		box.appendChild(newDiv)
+		container.appendChild(box);
 	}
 
+	// Check whether the given tile is movable
 	function isMovablePuzzle(id) {
-		var movable_piece = ["puzzle" + (empty_x - 1) + "_" + empty_y,
-							 "puzzle" + empty_x  + "_" + (empty_y - 1),
-							 "puzzle" + (empty_x + 1) + "_" + empty_y,
-							 "puzzle" + empty_x + "_" + (empty_y + 1)];
-		for (var i = movable_piece.length - 1; i >= 0; i--) {
-			if (movable_piece[i] == id) {
-				document.getElementById(id).classList.add("movable");
-				return true;
+		// Get the current position of the given tile
+		let tile = document.getElementById(id)
+		let boxNum = parseInt(tile.parentNode.id)
+		let row = Math.floor(boxNum / 4), col = boxNum % 4
+
+		// Tiles that are adjacent to the empty tiles
+		let tiles_to_check = [
+			[empty_x - 1, empty_y], 
+			[empty_x, empty_y - 1], 
+			[empty_x, empty_y + 1], 
+			[empty_x + 1, empty_y]
+		]
+
+		// Check if the current tile is one of them
+		for (const [r, c] of tiles_to_check) {
+			if (row == r && col == c) {
+				document.getElementById(id).classList.add("movable")
+				return true
 			}
 		}
-		document.getElementById(id).classList.remove("movable");
-		return false;
+
+		document.getElementById(id).classList.remove("movable")
+		return false
 	}
 
 	function isMovable () {
@@ -158,13 +179,15 @@
 			boxes.splice(boxes.indexOf(boxNum), 1)
 
 			// Put the tile into the ramdonly selected box
-			let box = document.getElementById("puzzlearea").children[boxNum]
+			let box = document.getElementById("puzzlearea").children[boxNum].children[0]
 			permutation[boxNum] = tileNum	// Update permutation
 			// Update the graphical representation
 			box.id = num2puzzleID(tileNum)
 			box.style.backgroundPositionX = -(tileNum % 4) * 100 + "px"
 			box.style.backgroundPositionY = -Math.floor(tileNum / 4) * 100 + "px"
 			box.className = "puzzle"
+			box.onmouseover = isMovable
+			box.onclick = move
 		}
 
 		// For the 15th tile, we put it into one of the two remaining
@@ -172,54 +195,35 @@
 		permutation[boxes[0]] = tiles[0]
 		permutation[boxes[1]] = tiles[1]
 		let tileNum = tiles.shift()	// The final non-empty tile (i.e., tile 15)
-		let box = document.getElementById("puzzlearea").children[boxes[0]]
+		let box = document.getElementById("puzzlearea").children[boxes[0]].children[0]
 		if (isEven(permutation)) {	// Solvable
 			// Put the final non-empty tile into the FIRST available box
 			console.log("Even")
 			// Take the first available box
-			box = document.getElementById("puzzlearea").children[boxes[0]]
+			box = document.getElementById("puzzlearea").children[boxes[0]].children[0]
 			boxes.shift()	// Pop out the occupied box
 		} else {	// Odd permutation -- not solvable in the current setting
 			// Put the final non-empty tile into the SECOND available 
 			// box to make it an even permutation.
 			console.log("Odd")
 			// Take the second available box
-			box = document.getElementById("puzzlearea").children[boxes[1]]
+			box = document.getElementById("puzzlearea").children[boxes[1]].children[0]
 			boxes.pop()		// Pop out the occupied box
 		}
 		// Update the graphical representation
 		box.id = num2puzzleID(tileNum)
 		box.style.backgroundPositionX = -(tileNum % 4) * 100 + "px"
 		box.style.backgroundPositionY = -Math.floor(tileNum / 4) * 100 + "px"
-
+		box.onmouseover = isMovable
+		box.onclick = move
 
 		// Lastly, place the empty tile and update the related class names
-		console.log(boxes)
 		tileNum = tiles.shift()
-		box = document.getElementById("puzzlearea").children[boxes[0]]
+		box = document.getElementById("puzzlearea").children[boxes[0]].children[0]
 		box.id = num2puzzleID(tileNum)
 		box.className = "empty"
 		empty_x = Math.floor(boxes[0] / 4)
 		empty_y = boxes[0] % 4
-
-		// Set tiles around the empty tile to be movable
-		let row = Math.floor(boxes[0] / 4)
-		let col = boxes[0] % 4
-		let tiles_to_check = [
-			[row - 1, col], 
-			[row, col - 1], 
-			[row, col + 1], 
-			[row + 1, col]
-		]
-		console.log(row, col)
-		for (const [r, c] of tiles_to_check) {
-			if (0 <= r && r < 4 && 0 <= c && c < 4) {
-				console.log(r, c)
-				let box = document.getElementById("puzzlearea").children[r * 4 + c]
-				console.log(box)
-				box.onmouseover = isMovable
-			}
-		}
 	}
 
 	function calcPermuation() {
