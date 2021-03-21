@@ -8,7 +8,7 @@
 	// Stack for move log
 	var logStack = [];
 
-	// 
+	// Switch of move log
 	var logOn = false;
 
 	// attaches a function to the calculate button
@@ -40,8 +40,7 @@
 		});
 	};
 
-	// Initialization
-	// Add tiles to the board
+	// Initialization -- Add tiles to the board
 	function addBlocks() {
 		let container = document.getElementById("puzzlearea");
 		for (let i = 0; i <= 14; i++) {
@@ -131,10 +130,8 @@
 			tile_box.appendChild(t2)
 			empty_box.appendChild(t1)
 
-			console.log(empty_x, empty_y)
-
 			// calcPermuation();
-			// addLog(tile);
+			addLog(tile);
 		}
 	}
 
@@ -225,14 +222,14 @@
 		let box = document.getElementById("puzzlearea").children[boxes[0]].children[0]
 		if (isEven(permutation)) {	// Solvable
 			// Put the final non-empty tile into the FIRST available box
-			console.log("Even")
+
 			// Take the first available box
 			box = document.getElementById("puzzlearea").children[boxes[0]].children[0]
 			boxes.shift()	// Pop out the occupied box
 		} else {	// Odd permutation -- not solvable in the current setting
 			// Put the final non-empty tile into the SECOND available 
 			// box to make it an even permutation.
-			console.log("Odd")
+
 			// Take the second available box
 			box = document.getElementById("puzzlearea").children[boxes[1]].children[0]
 			boxes.pop()		// Pop out the occupied box
@@ -316,9 +313,9 @@
 				while (queue.length > 0) {
 					let curr = queue.shift()
 					visited[curr] = true
-					if (!visited[curr]) {
+					if (!visited[permutation[curr]]) {
 						queue.push(permutation[curr])
-						num_of_2_cycle++
+						num_of_2_cycle += 1
 					}
 				}
 			}
@@ -333,7 +330,6 @@
 			console.log(permutation)
 			console.log(visited)
 		}
-
 		return num_of_2_cycle % 2 === 0
 	}
 
