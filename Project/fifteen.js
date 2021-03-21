@@ -1,12 +1,18 @@
 (function() {
 	"use strict";
+
+	// Location of the empty tile
 	var empty_x = 3;
 	var empty_y = 3;
+
+	// Stack for move log
 	var logStack = [];
+
+	// 
 	var logOn = false;
 
 	// attaches a function to the calculate button
-	window.onload = function () {
+	window.onload = function() {
 		addBlocks();
 		document.getElementById("shufflebutton").onclick = shuffle;
 		calcPermuation();
@@ -37,40 +43,46 @@
 	// Initialization
 	// Add tiles to the board
 	function addBlocks() {
-		var container = document.getElementById("puzzlearea");
-		for (var i = 0; i <= 14; i++) {
+		let container = document.getElementById("puzzlearea");
+		for (let i = 0; i <= 14; i++) {
+			// A box for containing the tile
 			let box = document.createElement('div')
 			box.className = 'box'
-			box.id = i.toString()
-			var newDiv = document.createElement("div");
+			box.id = "box-" + i.toString()
+
+			// Tile
+			let newDiv = document.createElement("div");
 			newDiv.classList.add("puzzle");
-			newDiv.id = ("puzzle" + i % 4 + "_" + Math.floor(i / 4));
+			newDiv.id = ("puzzle" + Math.floor(i / 4) + "_" + i % 4);
 			newDiv.onmouseover = isMovable;
 			newDiv.onclick = move;
-			newDiv.style.left = (i % 4) * 100 + "px";
 			newDiv.style.top = Math.floor(i / 4) * 100 + "px";
+			newDiv.style.left = (i % 4) * 100 + "px";
 			newDiv.style.backgroundPositionX = -(i % 4) * 100 + "px";
 			newDiv.style.backgroundPositionY = -Math.floor(i / 4) * 100 + "px";
 			box.appendChild(newDiv)
 			container.appendChild(box);
 		}
+
+		// Empty tile
 		let box = document.createElement('div')
 		box.className = 'box'
-		box.id = i.toString()
-		var newDiv = document.createElement("div");
+		box.id = "box-15"
+
+		let newDiv = document.createElement("div");
 		newDiv.classList.add("empty");
-		newDiv.id = ("puzzle" + 3 + "_" + 3);
+		newDiv.id = "puzzle3_3";
 		newDiv.style.left = "300px";
 		newDiv.style.top = "300px";
 		box.appendChild(newDiv)
 		container.appendChild(box);
 	}
 
-	// Check whether the given tile is movable
+	// Given tile id, check whether the corresponding tile is movable
 	function isMovablePuzzle(id) {
 		// Get the current position of the given tile
 		let tile = document.getElementById(id)
-		let boxNum = parseInt(tile.parentNode.id)
+		let boxNum = boxID2num(tile.parentNode.id)
 		let row = Math.floor(boxNum / 4), col = boxNum % 4
 
 		// Tiles that are adjacent to the empty tiles
@@ -81,7 +93,8 @@
 			[empty_x + 1, empty_y]
 		]
 
-		// Check if the current tile is one of them
+		// Check if the current tile is one of the 
+		// neighbours of the empty tile
 		for (const [r, c] of tiles_to_check) {
 			if (row == r && col == c) {
 				document.getElementById(id).classList.add("movable")
@@ -93,30 +106,44 @@
 		return false
 	}
 
-	function isMovable () {
+	// Move a given tile
+	function movePuzzle(tile) {
+		// First, check if the given tile is movable
+		if (isMovablePuzzle(tile.id)) {
+
+			empty_x = parseInt(boxID2num(tile.parentNode.id) / 4)
+			empty_y = boxID2num(tile.parentNode.id) % 4
+
+			let t1 = tile.cloneNode(true)
+			let t2 = document.querySelector(".empty").cloneNode(true)
+			t1.style.top = t2.style.top
+			t1.style.left = t2.style.left
+			t1.onmouseover = isMovable
+			t1.onclick = move
+			t2.style.top = tile.style.top
+			t2.style.left = tile.style.left
+
+			let tile_box = tile.parentNode
+			let empty_box = document.querySelector(".empty").parentNode
+			tile_box.removeChild(tile_box.lastChild)
+			empty_box.removeChild(empty_box.lastChild)
+
+			tile_box.appendChild(t2)
+			empty_box.appendChild(t1)
+
+			console.log(empty_x, empty_y)
+
+			// calcPermuation();
+			// addLog(tile);
+		}
+	}
+
+	function isMovable() {
 		isMovablePuzzle(this.id);
 	}
 
 	function move() {
 		movePuzzle(this);
-	}
-
-	function movePuzzle(puzzle) {
-		if (isMovablePuzzle(puzzle.id)) {
-			var empty = document.querySelector(".empty");
-			empty.id = puzzle.id;
-			puzzle.id = "puzzle" + empty_x + "_" + empty_y;
-			var tempx = empty_x * 100 + "px";
-			var tempy = empty_y * 100 + "px";
-			empty_x = parseInt(puzzle.style.left) / 100;
-			empty_y = parseInt(puzzle.style.top) / 100;
-			empty.style.left = puzzle.style.left;
-			empty.style.top = puzzle.style.top;
-			puzzle.style.left = tempx;
-			puzzle.style.top = tempy;
-			calcPermuation();
-			addLog(puzzle);
-		}
 	}
 
 	function addLog(puzzle) {
@@ -226,38 +253,38 @@
 		empty_y = boxes[0] % 4
 	}
 
-	function calcPermuation() {
-		var list = document.querySelectorAll(".puzzle");
-		var puzzles = [];
-		var remaining = [];
-		for (var i = 0; i < list.length; i++) {
-			puzzles.push(list[i]);
-			remaining.push(i);
-		}
-		remaining.push(15);
-		puzzles.push(document.querySelector(".empty"));
-		var counter = puzzles.length;
-		var start = 0;
-		var cur = start;
-		var result = "";
-		do {
-			result += "( ";
-			do {
-				counter --;
-				remaining.splice(remaining.indexOf(cur), 1);
-				cur = puzzleID2num(puzzles[cur].id);
-				result += cur + 1 + " ";
-			} while (start != cur)
-			result += ")";
-			start = remaining[0];
-			cur = start;
-		} while (counter > 0)
-		document.getElementById("permutation").innerText = result;
-	}
+	// function calcPermuation() {
+	// 	var list = document.querySelectorAll(".puzzle");
+	// 	var puzzles = [];
+	// 	var remaining = [];
+	// 	for (var i = 0; i < list.length; i++) {
+	// 		puzzles.push(list[i]);
+	// 		remaining.push(i);
+	// 	}
+	// 	remaining.push(15);
+	// 	puzzles.push(document.querySelector(".empty"));
+	// 	var counter = puzzles.length;
+	// 	var start = 0;
+	// 	var cur = start;
+	// 	var result = "";
+	// 	do {
+	// 		result += "( ";
+	// 		do {
+	// 			counter --;
+	// 			remaining.splice(remaining.indexOf(cur), 1);
+	// 			cur = puzzleID2num(puzzles[cur].id);
+	// 			result += cur + 1 + " ";
+	// 		} while (start != cur)
+	// 		result += ")";
+	// 		start = remaining[0];
+	// 		cur = start;
+	// 	} while (counter > 0)
+	// 	document.getElementById("permutation").innerText = result;
+	// }
 
 	// Convert a puzzle id into a 0-indexed number
 	function puzzleID2num(id) {
-		return (parseInt(id.charAt(8))) * 4 + parseInt(id.charAt(6));
+		return (parseInt(id.charAt(6))) * 4 + parseInt(id.charAt(8));
 	}
 
 	// Convert a 0-indexed number to a string formated puzzle id
@@ -265,6 +292,11 @@
 		let row = Math.floor(num / 4)
 		let col = num % 4
 		return "puzzle" + row.toString() + '_' + col.toString()
+	}
+
+	// Convert a box ID into a 0-indexed number
+	function boxID2num(id) {
+		return parseInt(id.split('-').pop())
 	}
 
 	// Given a permutation in object form, return true if
