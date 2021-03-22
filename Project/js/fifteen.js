@@ -12,7 +12,7 @@ var logStack = [];
 var logOn = true;
 
 // Background of each puzzle tile
-var imageSrc = "./imgs/number_grid.jpg";
+var imageSrc = "url('./imgs/background.jpg')"
 
 // attaches a function to the calculate button
 window.onload = function() {
@@ -61,7 +61,7 @@ function addBlocks() {
 		newDiv.onclick = move;
 		newDiv.style.top = Math.floor(i / 4) * 100 + "px";
 		newDiv.style.left = (i % 4) * 100 + "px";
-		newDiv.style.backgroundImage = "url(" + imageSrc + ")"
+		newDiv.style.backgroundImage = imageSrc;
 		newDiv.style.backgroundPositionX = -(i % 4) * 100 + "px";
 		newDiv.style.backgroundPositionY = -Math.floor(i / 4) * 100 + "px";
 		box.appendChild(newDiv)
@@ -154,10 +154,17 @@ function undo() {
 
 // switch background src
 function picture() {
-	if (imageSrc == "../imgs/background.jpg") {
-		imageSrc = "../imgs/number_grid.jpg"
+	if (imageSrc == "url('./imgs/background.jpg')") {
+		imageSrc = "url('./imgs/number_grid.jpg')"
 	} else {
-		imageSrc = "../imgs/background.jpg"
+		imageSrc = "url('./imgs/background.jpg')"
+	}
+	for (var i = 0; i < 15; i++) {
+		let tileID = num2puzzleID(i)
+		let tile = document.getElementById(tileID.toString())
+		if (tile.classList != "empty") {
+			tile.style.backgroundImage = imageSrc
+		}
 	}
 }
 
@@ -281,8 +288,13 @@ function clearLogs() {
 }
 
 function shuffle() {
-	// Clear out the log stack
+	// Clear out the log stack, log and logInverse
+	let log = document.getElementById("log")
+	let inverseLog = document.getElementById("inverseLog")
 	logStack.splice(0, logStack.length)
+	log.innerHTML = "";
+	inverseLog.innerHTML = "";
+
 
 	let permutation = {}	// Permutation of the puzzle
 	let boxIndices = []		// Available boxes; Used for generating random permutation
@@ -337,6 +349,14 @@ function shuffle() {
 
 		// Add new div to the box div
 		box.appendChild(tile_div)
+	}
+
+	for (var i = 0; i < 15; i++) {
+		let tileID = num2puzzleID(i)
+		let tile = document.getElementById(tileID.toString())
+		if (tile.classList != "empty") {
+			tile.style.backgroundImage = imageSrc
+		}
 	}
 
 	// Calculate and display the new permutation
