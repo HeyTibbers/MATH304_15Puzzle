@@ -11,11 +11,18 @@ var logStack = [];
 // Switch of move log
 var logOn = true;
 
+// Background of each puzzle tile
+var imageSrc = "../imgs/background.jpg";
+//background-image: url("../imgs/background.jpg");
+
 // attaches a function to the calculate button
 window.onload = function() {
 	addBlocks();
 	document.getElementById("shufflebutton").onclick = shuffle;
 	document.getElementById("reset-button").onclick = reset;
+	document.getElementById("undo-button").onclick = undo;
+	document.getElementById("picture-button").onclick = picture;
+	document.getElementById("help-button").onclick = help;
 	calcPermuation();
 	document.getElementById("move-log-switch").onclick = function() {
 		if (logOn == false) {
@@ -55,6 +62,7 @@ function addBlocks() {
 		newDiv.onclick = move;
 		newDiv.style.top = Math.floor(i / 4) * 100 + "px";
 		newDiv.style.left = (i % 4) * 100 + "px";
+		newDiv.style.backgroundImage = "url('../imgs/background.jpg')"
 		newDiv.style.backgroundPositionX = -(i % 4) * 100 + "px";
 		newDiv.style.backgroundPositionY = -Math.floor(i / 4) * 100 + "px";
 		box.appendChild(newDiv)
@@ -112,6 +120,56 @@ function reset() {
 	clearLogs()
 	addBlocks()
 	calcPermuation()
+}
+
+// Undo a move 
+function undo() {
+	let inverseDirection = {
+		'R': 'L', 
+		'L': 'R', 
+		'U': 'D', 
+		'D': 'U', 
+		' ': ' '
+	}
+	if (logStack.length > 0) {
+		moveDirection(inverseDirection[logStack.pop()])
+		logStack.pop()
+
+		let log = document.getElementById("log")
+		let inverseLog = document.getElementById("inverseLog")
+		let lst = log.innerHTML.split('')
+		for (let i = 0; i < 2; i++) {
+			while (lst.length > 0 && lst[lst.length - 1] === ' ') {
+				lst.pop()
+			}
+			lst.pop()
+		}
+		log.innerHTML = lst.join('')
+		lst.reverse()
+		lst = lst.map((curr) => {
+			return inverseDirection[curr]
+		})
+		inverseLog.innerHTML = lst.join('')
+	}
+}
+
+// switch background src
+function picture() {
+	if (imageSrc == "../imgs/background.jpg") {
+		imageSrc = "../imgs/number_grid.jpg"
+	} else {
+		imageSrc = "../imgs/background.jpg"
+	}
+}
+
+// help alter 
+function help() {
+	var shortcut = "key shortcut:"
+	var moveShortcut = "\n    'r': swap empty tile with right tile\n    'l': swap empty tile with left tile\n    'u': swap empty tile with up tile\n    'd': swap empty tile with down tile";
+	var clearLogShortcut = "\n    'c': clear move log"
+	var spaceLogShortcut = "\n    'space': separate move log"
+	var undoShortcut = "\n    'ctrl+z': undo a move"
+	alert(shortcut + moveShortcut + clearLogShortcut + spaceLogShortcut + undoShortcut);
 }
 
 // Move a tile based on a given direction.
