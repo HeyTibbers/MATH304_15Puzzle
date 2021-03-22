@@ -12,8 +12,7 @@ var logStack = [];
 var logOn = true;
 
 // Background of each puzzle tile
-var imageSrc = "../imgs/background.jpg";
-//background-image: url("../imgs/background.jpg");
+var imageSrc = "./imgs/number_grid.jpg";
 
 // attaches a function to the calculate button
 window.onload = function() {
@@ -62,7 +61,7 @@ function addBlocks() {
 		newDiv.onclick = move;
 		newDiv.style.top = Math.floor(i / 4) * 100 + "px";
 		newDiv.style.left = (i % 4) * 100 + "px";
-		newDiv.style.backgroundImage = "url('../imgs/background.jpg')"
+		newDiv.style.backgroundImage = "url(" + imageSrc + ")"
 		newDiv.style.backgroundPositionX = -(i % 4) * 100 + "px";
 		newDiv.style.backgroundPositionY = -Math.floor(i / 4) * 100 + "px";
 		box.appendChild(newDiv)
@@ -164,11 +163,11 @@ function picture() {
 
 // help alter 
 function help() {
-	var shortcut = "key shortcut:"
+	var shortcut = "Shortcut Keys:"
 	var moveShortcut = "\n    'r': swap empty tile with right tile\n    'l': swap empty tile with left tile\n    'u': swap empty tile with up tile\n    'd': swap empty tile with down tile";
 	var clearLogShortcut = "\n    'c': clear move log"
-	var spaceLogShortcut = "\n    'space': separate move log"
-	var undoShortcut = "\n    'ctrl+z': undo a move"
+	var spaceLogShortcut = "\n    'Space': separate move log"
+	var undoShortcut = "\n    'Ctrl+z': undo a move"
 	alert(shortcut + moveShortcut + clearLogShortcut + spaceLogShortcut + undoShortcut);
 }
 
