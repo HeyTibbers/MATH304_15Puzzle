@@ -12,9 +12,6 @@ h1, p, button, #permutation, #log, #inverseLog, #move_log {
 	width: 94px;
 	height: 94px;
 	position: absolute;
-}
-
-.puzzle {
 	border: 6px solid black;
 }
 

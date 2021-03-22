@@ -285,73 +285,61 @@ function shuffle() {
 	logStack.splice(0, logStack.length)
 
 	let permutation = {}	// Permutation of the puzzle
-	let tiles = []			// Tiles to be used
-	let boxes = []			// Available boxes
+	let boxIndices = []		// Available boxes; Used for generating random permutation
 	for (let i = 0; i < 16; i++) {
-		permutation[i] = i
-		tiles.push(i)
-		boxes.push(i)
+		boxIndices.push(i)
 	}
 
-	// Put the first 14 tiles randomly into the boxes
-	for (let i = 0; i < 14; i++) {
-		// Take the first tile, and remove it from the array
-		let tileNum = tiles.shift()
+	// Generate random permutation
+	for (let i = 0; i < 16; i++) {
+		let j = Math.floor(Math.random() * boxIndices.length)
+		permutation[i] = boxIndices[j]
+		boxIndices.splice(j, 1)
+	}
 
-		// Ramdonly select a box
-		let boxNum = boxes[Math.floor(Math.random() * boxes.length)]
+	// Check parity (i.e., solvability) of the random permutation
+	if (!isEven(permutation)) {
+		// If it is odd (i.e., not solvable), swap tile 1 and
+		// tile 2 to make it even (i.e., solvable)
+		let tmp = permutation[0]
+		permutation[0] = permutation[1]
+		permutation[1] = tmp
+	}
 
-		// Remove the box from the array
-		// i.e., mark it as unavailable
-		boxes.splice(boxes.indexOf(boxNum), 1)
+	// Put tiles into the boxes based on the generated ramdon permutation
+	for (let i = 0; i < 16; i++) {
+		// Generate new tile div
+		let tile_div = document.createElement("div")
+
+		if (i == 15) {	// Special case: empty tile
+			tile_div.classList.add("empty")
+			// Update position of empty tile
+			empty_x = Math.floor(permutation[i] / 4)
+			empty_y = permutation[i] % 4
+		} else {		// Regular tiles
+			tile_div.classList.add("puzzle")
+		}
 
 		// Put the tile into the ramdonly selected box
-		let box = document.getElementById("puzzlearea").children[boxNum].children[0]
-		permutation[boxNum] = tileNum	// Update permutation
-		// Update the graphical representation
-		box.id = num2puzzleID(tileNum)
-		box.style.backgroundPositionX = -(tileNum % 4) * 100 + "px"
-		box.style.backgroundPositionY = -Math.floor(tileNum / 4) * 100 + "px"
-		box.className = "puzzle"
-		box.onmouseover = isMovable
-		box.onclick = move
+		let box = document.getElementById(num2boxID(permutation[i]))
+
+		// Remove the old div from the box div
+		box.removeChild(box.lastChild)
+
+		tile_div.id = num2puzzleID(i)
+		tile_div.onmouseover = isMovable
+		tile_div.onclick = move
+		tile_div.style.top = Math.floor(permutation[i] / 4) * 100 + "px"
+		tile_div.style.left = (permutation[i] % 4) * 100 + "px"
+		tile_div.style.backgroundImage = "url(" + imageSrc + ")"
+		tile_div.style.backgroundPositionX = -(i % 4) * 100 + "px"
+		tile_div.style.backgroundPositionY = -Math.floor(i / 4) * 100 + "px"
+
+		// Add new div to the box div
+		box.appendChild(tile_div)
 	}
 
-	// For the 15th tile, we put it into one of the two remaining
-	// available boxes based on solvability of the puzzle.
-	permutation[boxes[0]] = tiles[0]
-	permutation[boxes[1]] = tiles[1]
-	let tileNum = tiles.shift()	// The final non-empty tile (i.e., tile 15)
-	let box = document.getElementById("puzzlearea").children[boxes[0]].children[0]
-	if (isEven(permutation)) {	// Solvable
-		// Put the final non-empty tile into the FIRST available box
-
-		// Take the first available box
-		box = document.getElementById("puzzlearea").children[boxes[0]].children[0]
-		boxes.shift()	// Pop out the occupied box
-	} else {	// Odd permutation -- not solvable in the current setting
-		// Put the final non-empty tile into the SECOND available 
-		// box to make it an even permutation.
-
-		// Take the second available box
-		box = document.getElementById("puzzlearea").children[boxes[1]].children[0]
-		boxes.pop()		// Pop out the occupied box
-	}
-	// Update the graphical representation
-	box.id = num2puzzleID(tileNum)
-	box.style.backgroundPositionX = -(tileNum % 4) * 100 + "px"
-	box.style.backgroundPositionY = -Math.floor(tileNum / 4) * 100 + "px"
-	box.onmouseover = isMovable
-	box.onclick = move
-
-	// Lastly, place the empty tile and update the related class names
-	tileNum = tiles.shift()
-	box = document.getElementById("puzzlearea").children[boxes[0]].children[0]
-	box.id = num2puzzleID(tileNum)
-	box.className = "empty"
-	empty_x = Math.floor(boxes[0] / 4)
-	empty_y = boxes[0] % 4
-
+	// Calculate and display the new permutation
 	calcPermuation()
 }
 
@@ -443,14 +431,25 @@ function isEven(permutation) {
 	for (let i = 0; i < 16; i++) {
 		if (!visited[i]) {
 			let queue = [i]
+			let count_element = 0
 			while (queue.length > 0) {
 				let curr = queue.shift()
+				count_element += 1
 				visited[curr] = true
 				if (!visited[permutation[curr]]) {
 					queue.push(permutation[curr])
-					num_of_2_cycle += 1
 				}
 			}
+			num_of_2_cycle += count_element - 1
+		}
+	}
+
+	let even_boxes = [0, 2, 5, 7, 8, 10, 13, 15]	// 0-indexed
+	let box_parity = 1
+	for (let i = 0; i < even_boxes.length; i++) {
+		if (permutation[15] === even_boxes[i]) {
+			box_parity = 0
+			break
 		}
 	}
 
@@ -463,7 +462,7 @@ function isEven(permutation) {
 		console.log(permutation)
 		console.log(visited)
 	}
-	return num_of_2_cycle % 2 === 0
+	return (num_of_2_cycle % 2) === box_parity
 }
 
 
