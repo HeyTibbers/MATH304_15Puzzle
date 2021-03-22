@@ -1,3 +1,9 @@
+
+#main-column {
+	width: 85%;
+	margin: 0 auto;
+}
+
 h1, p, button, #permutation, #log, #inverseLog, #move_log {
 	text-align: center;
 }
@@ -28,4 +34,22 @@ h1, p, button, #permutation, #log, #inverseLog, #move_log {
 * {
 	font: cursive;
 	text-align: center;
+}
+
+#control-panel {
+	text-align: center;
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
+
+#shufflebutton {
+	background-color: #2196F3;
+	border-radius: 5px;
+	color: #ffffff;
+	padding: 0px;
+	width: 85px;
+	height: 35px;
+	font-weight: bold;
+	font-size: 15px;
+	font-family: "OpenSans", "Roboto", "Helvetica", "Arial", sans-serif;
 }

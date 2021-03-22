@@ -1,0 +1,90 @@
+
+#logging-area {
+	overflow-wrap: break-word;
+	text-align: left;
+	font-size: 20px;
+	padding-left: 20%;
+	padding-right: 10%;
+	font-family: "OpenSans", "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+.log-text {
+	text-align: left;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#move-log-switch-container {
+	text-align: left;
+	padding-bottom: 10px;
+	padding-top: 10px;
+	vertical-align: middle;
+}
+
+
+/* Reference: https://www.w3schools.com/howto/howto_css_switch.asp */
+
+/* The switch - the box around the slider */
+.log-switch {
+  position: relative;
+  display: inline-block;
+  width: 41px;
+  height: 16px;
+}
+
+/* Hide default HTML checkbox */
+.log-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 11px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+	margin-top: 0px;
+	border-radius: 34px;
+}
+
+.slider.round:before {
+	border-radius: 50%;
+}
+

@@ -16,13 +16,21 @@ window.onload = function() {
 	addBlocks();
 	document.getElementById("shufflebutton").onclick = shuffle;
 	calcPermuation();
-	document.getElementById("move_log").onclick = function() {
+	document.getElementById("move-log-switch").onclick = function() {
 		if (logOn == false) {
 			logOn = true;
+			let log_text_div = document.getElementsByClassName("log-text")
+			for (let i = 0; i < log_text_div.length; i++) {
+				log_text_div[i].style.display = ""
+			}
 		} else {
 			logOn = false;
 			log.innerHTML = "";
 			inverseLog.innerHTML = "";
+			let log_text_div = document.getElementsByClassName("log-text")
+			for (let i = 0; i < log_text_div.length; i++) {
+				log_text_div[i].style.display = "none"
+			}
 		}
 	}
 }
