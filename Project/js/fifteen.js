@@ -159,7 +159,7 @@ function picture() {
 	} else {
 		imageSrc = "url('./imgs/background.jpg')"
 	}
-	for (var i = 0; i < 15; i++) {
+	for (var i = 0; i < 16; i++) {
 		let tileID = num2puzzleID(i)
 		let tile = document.getElementById(tileID.toString())
 		if (tile.classList != "empty") {
@@ -289,12 +289,7 @@ function clearLogs() {
 
 function shuffle() {
 	// Clear out the log stack, log and logInverse
-	let log = document.getElementById("log")
-	let inverseLog = document.getElementById("inverseLog")
-	logStack.splice(0, logStack.length)
-	log.innerHTML = "";
-	inverseLog.innerHTML = "";
-
+	clearLogs()
 
 	let permutation = {}	// Permutation of the puzzle
 	let boxIndices = []		// Available boxes; Used for generating random permutation
@@ -330,6 +325,7 @@ function shuffle() {
 			empty_y = permutation[i] % 4
 		} else {		// Regular tiles
 			tile_div.classList.add("puzzle")
+			tile_div.style.backgroundImage = imageSrc
 		}
 
 		// Put the tile into the ramdonly selected box
@@ -343,20 +339,11 @@ function shuffle() {
 		tile_div.onclick = move
 		tile_div.style.top = Math.floor(permutation[i] / 4) * 100 + "px"
 		tile_div.style.left = (permutation[i] % 4) * 100 + "px"
-		tile_div.style.backgroundImage = "url(" + imageSrc + ")"
 		tile_div.style.backgroundPositionX = -(i % 4) * 100 + "px"
 		tile_div.style.backgroundPositionY = -Math.floor(i / 4) * 100 + "px"
 
 		// Add new div to the box div
 		box.appendChild(tile_div)
-	}
-
-	for (var i = 0; i < 15; i++) {
-		let tileID = num2puzzleID(i)
-		let tile = document.getElementById(tileID.toString())
-		if (tile.classList != "empty") {
-			tile.style.backgroundImage = imageSrc
-		}
 	}
 
 	// Calculate and display the new permutation
