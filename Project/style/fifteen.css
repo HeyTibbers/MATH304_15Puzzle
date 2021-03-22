@@ -42,7 +42,8 @@ h1, p, button, #permutation, #log, #inverseLog, #move_log {
 	padding-bottom: 30px;
 }
 
-#shufflebutton {
+#shufflebutton, #reset-button {
+	margin-left: 30px;
 	background-color: #2196F3;
 	border-radius: 5px;
 	color: #ffffff;

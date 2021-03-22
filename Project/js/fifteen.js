@@ -15,6 +15,7 @@ var logOn = true;
 window.onload = function() {
 	addBlocks();
 	document.getElementById("shufflebutton").onclick = shuffle;
+	document.getElementById("reset-button").onclick = reset;
 	calcPermuation();
 	document.getElementById("move-log-switch").onclick = function() {
 		if (logOn == false) {
@@ -37,6 +38,8 @@ window.onload = function() {
 
 // Initialization -- Add tiles to the board
 function addBlocks() {
+	empty_x = 3
+	empty_y = 3
 	let container = document.getElementById("puzzlearea");
 	for (let i = 0; i <= 14; i++) {
 		// A box for containing the tile
@@ -98,6 +101,17 @@ function isMovablePuzzle(id) {
 
 	document.getElementById(id).classList.remove("movable")
 	return false
+}
+
+// Reset the board to the original state
+function reset() {
+	let container = document.getElementById("puzzlearea")
+	while (container.children.length > 0) {
+		container.removeChild(container.lastChild)
+	}
+	clearLogs()
+	addBlocks()
+	calcPermuation()
 }
 
 // Move a tile based on a given direction.
@@ -196,6 +210,17 @@ function addLog(puzzle) {
 		log.innerHTML = log.innerHTML + direction;
 		inverseLog.innerHTML = inverseDirection + inverseLog.innerHTML;
 	}
+}
+
+// Clear out the move logs and log stack
+function clearLogs() {
+	// Clear out the log stack
+	logStack.splice(0, logStack.length)
+
+	let log = document.getElementById("log");
+	let inverseLog = document.getElementById("inverseLog")
+	log.innerHTML = "";
+	inverseLog.innerHTML = "";
 }
 
 function shuffle() {
