@@ -9,10 +9,10 @@ h1, p, button, #permutation, #log, #inverseLog, #move_log {
 }
 
 .puzzle, .empty {
-	width: 94px;
-	height: 94px;
+	width: 96px;
+	height: 96px;
 	position: absolute;
-	border: 6px solid black;
+	border: 2px solid black;
 }
 
 .movable:hover{
@@ -39,7 +39,7 @@ h1, p, button, #permutation, #log, #inverseLog, #move_log {
 }
 
 #shufflebutton, #reset-button, #undo-button, #picture-button, #help-button {
-	margin-left: 30px;
+	margin-left: 25px;
 	background-color: #2196F3;
 	border-radius: 5px;
 	color: #ffffff;
