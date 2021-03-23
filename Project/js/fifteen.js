@@ -11,8 +11,11 @@ var logStack = [];
 // Switch of move log
 var logOn = true;
 
+// Shuffled or not, alter congratulation(solved) only when shuffled
+var shuffled = false;
+
 // Background of each puzzle tile
-var imageSrc = "url('./imgs/background.jpg')"
+var imageSrc = "url('./imgs/number_grid.jpg')"
 
 // attaches a function to the calculate button
 window.onload = function() {
@@ -116,6 +119,7 @@ function reset() {
 	while (container.children.length > 0) {
 		container.removeChild(container.lastChild)
 	}
+	shuffled = false
 	clearLogs()
 	addBlocks()
 	calcPermuation()
@@ -154,9 +158,13 @@ function undo() {
 
 // switch background src
 function picture() {
+	let pictureButton = document.getElementById("picture-button")
+	
 	if (imageSrc == "url('./imgs/background.jpg')") {
+		pictureButton.innerHTML = "Picture"
 		imageSrc = "url('./imgs/number_grid.jpg')"
 	} else {
+		pictureButton.innerHTML = "Number"
 		imageSrc = "url('./imgs/background.jpg')"
 	}
 	for (var i = 0; i < 16; i++) {
@@ -235,7 +243,26 @@ function movePuzzle(tile) {
 		addLog(t1)			// Write move log
 		calcPermuation()	// Update permutation
 	}
+
+	// Check solved
+	checkSolved(); 
 }
+
+// check the puzzle is in solved state
+function checkSolved() {
+	for (var i = 0; i < 16; i++) {
+		let boxID = num2boxID(i)
+		let box = document.getElementById(boxID.toString())
+		if (box.children[0].id != num2puzzleID(i)) {
+			return
+		}
+	}
+
+	if (shuffled) {
+		shuffled = false
+		alert("Congratulation!")
+	}
+} 
 
 function isMovable() {
 	isMovablePuzzle(this.id);
@@ -288,6 +315,8 @@ function clearLogs() {
 }
 
 function shuffle() {
+	shuffled = true
+
 	// Clear out the log stack, log and logInverse
 	clearLogs()
 
