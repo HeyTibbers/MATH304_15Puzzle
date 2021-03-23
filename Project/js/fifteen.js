@@ -15,7 +15,7 @@ var logOn = true;
 var shuffled = false;
 
 // Background of each puzzle tile
-var imageSrc = "url('./imgs/number_grid.jpg')"
+var imageSrc = "url('./imgs/background.jpg')"
 
 // attaches a function to the calculate button
 window.onload = function() {
