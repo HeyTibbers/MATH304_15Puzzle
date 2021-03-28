@@ -39,7 +39,7 @@ h1, p, button, #permutation, #log, #inverseLog, #move_log {
 }
 
 #shufflebutton, #reset-button, #undo-button, #picture-button, #help-button {
-	margin-left: 25px;
+	margin-left: 20px;
 	background-color: #2196F3;
 	border-radius: 5px;
 	color: #ffffff;

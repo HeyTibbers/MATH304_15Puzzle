@@ -21,6 +21,35 @@
 	vertical-align: middle;
 }
 
+.apply-input-container {
+	text-align: left;
+	vertical-align: middle;
+}
+
+.apply-inputbox {
+	text-align: left;
+	height: 25px;
+	width: 85%;
+	margin-top: 10px;
+	margin-bottom: 5px;
+	padding: 5px;
+	font-size: 20px;
+	font-family: "OpenSans", "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+#apply-button {
+	margin-left: 0px;
+	background-color: #2196F3;
+	border-radius: 5px;
+	color: #ffffff;
+	padding: 0px;
+	width: 65px;
+	height: 30px;
+	font-weight: bold;
+	font-size: 15px;
+	font-family: "OpenSans", "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
 
 /* Reference: https://www.w3schools.com/howto/howto_css_switch.asp */
 
