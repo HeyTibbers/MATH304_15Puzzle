@@ -162,6 +162,7 @@ function undo() {
 			lst.pop()
 		}
 		log.innerHTML = lst.join('')
+		lst = lst.reverse()
 		lst = lst.map((curr) => {
 			return inverseDirection[curr]
 		})
@@ -347,7 +348,7 @@ function addLog(puzzle) {
 		var log = document.getElementById("log")
 		var inverseLog = document.getElementById("inverseLog")
 		log.innerHTML += direction
-		inverseLog.innerHTML += inverseDirection
+		inverseLog.innerHTML = inverseDirection + inverseLog.innerHTML
 	}
 }
 

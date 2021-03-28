@@ -12,7 +12,7 @@ document.addEventListener("keypress", event => {
 		// Space -- Add a space to logs
 		if (event.keyCode === 32 && logOn == true) {
 			log.innerHTML += " "
-			inverseLog.innerHTML += " "
+			inverseLog.innerHTML = " " + inverseLog.innerHTML
 		}
 
 		// 'r' -- Move tile to the right
