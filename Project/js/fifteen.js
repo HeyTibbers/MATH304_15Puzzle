@@ -44,34 +44,14 @@ window.onload = function() {
 		}
 	}
 
-	// document.getElementById("apply-inputbox-id").onkeydown = checkMoveSeq
 	document.getElementById("apply-inputbox-id").addEventListener("input", (event) => {
-		let textbox = document.getElementById("apply-inputbox-id")
-		let s = textbox.value
-		let validCharacters = [' ', 'r', 'u', 'd', 'l', 'R', 'U', 'D', 'L']
-		let isValid = true
-		for (let i = 0; i < s.length; i++) {
-			if (s[i] != ' ' 
-					&& s[i] != 'r'
-					&& s[i] != 'u'
-					&& s[i] != 'l'
-					&& s[i] != 'd'
-					&& s[i] != 'R'
-					&& s[i] != 'U'
-					&& s[i] != 'L'
-					&& s[i] != 'D') {
-				isValid = false
-				break
-			}
-		}
-
-		if (isValid) {
-			textbox.style.backgroundColor = ""
+		if (checkMoveSeq()) {
+			document.getElementById("apply-inputbox-id").style.backgroundColor = ""
 			document.getElementById("apply-invalid-msg").innerHTML = ""
 			document.getElementById("apply-button").disabled = false
 		} else {
-			textbox.style.backgroundColor = "pink"
-			document.getElementById("apply-invalid-msg").innerHTML = "Invalid action detected"
+			document.getElementById("apply-inputbox-id").style.backgroundColor = "pink"
+			document.getElementById("apply-invalid-msg").innerHTML = "Invalid action detected!"
 			document.getElementById("apply-button").disabled = true
 		}
 	})
@@ -237,7 +217,7 @@ function moveDirection(direction) {
 		tile_x = empty_x - 1
 		tile_y = empty_y
 	} else {
-		console.log("moveDirection: Invalid direction!!")
+		console.log("moveDirection: Invalid direction:" + direction)
 		return
 	}
 	if (0 <= tile_x && tile_x < 4 && 0 <= tile_y && tile_y < 4) {
@@ -299,12 +279,37 @@ function checkSolved() {
 
 // Check if the move sequence is valid
 function checkMoveSeq() {
-	console.log(this)
+	let textbox = document.getElementById("apply-inputbox-id")
+	let s = textbox.value
+	let validCharacters = [' ', 'r', 'u', 'd', 'l', 'R', 'U', 'D', 'L']
+	let isValid = true
+	for (let i = 0; i < s.length; i++) {
+		if (s[i] != ' ' 
+				&& s[i] != 'r'
+				&& s[i] != 'u'
+				&& s[i] != 'l'
+				&& s[i] != 'd'
+				&& s[i] != 'R'
+				&& s[i] != 'U'
+				&& s[i] != 'L'
+				&& s[i] != 'D') {
+			isValid = false
+			break
+		}
+	}
+	return isValid
 }
 
 // Apply a move sequence
 function apply() {
-
+	if (checkMoveSeq()) {
+		let textbox = document.getElementById("apply-inputbox-id")
+		let s = textbox.value
+		let sequence = s.replace(/\s/g, '').toUpperCase().split('')
+		for (const move of sequence) {
+			moveDirection(move)
+		}
+	}
 }
 
 function isMovable() {
