@@ -27,20 +27,24 @@ window.onload = function() {
 	document.getElementById("help-button").onclick = help;
 	calcPermuation();
 	document.getElementById("move-log-switch").onclick = function() {
-		if (logOn == false) {
-			logOn = true;
-			let log_text_div = document.getElementsByClassName("log-text")
+		let switch_text = document.getElementById("switch-text")
+		let log_text_div = document.getElementsByClassName("log-text")
+		if (logOn === false) {
+			logOn = true
+			switch_text.innerHTML = "Disable recording: "
 			for (let i = 0; i < log_text_div.length; i++) {
-				log_text_div[i].style.display = ""
+				log_text_div[i].style.color = "black"
 			}
+			document.getElementById("log").style.color = "black"
+			document.getElementById("inverseLog").style.color = "black"
 		} else {
-			logOn = false;
-			log.innerHTML = "";
-			inverseLog.innerHTML = "";
-			let log_text_div = document.getElementsByClassName("log-text")
+			logOn = false
+			switch_text.innerHTML = "Enable recording: "
 			for (let i = 0; i < log_text_div.length; i++) {
-				log_text_div[i].style.display = "none"
+				log_text_div[i].style.color = "grey"
 			}
+			document.getElementById("log").style.color = "grey"
+			document.getElementById("inverseLog").style.color = "grey"
 		}
 	}
 
@@ -141,6 +145,7 @@ function reset() {
 
 // Undo a move 
 function undo() {
+	// Define inverse actions
 	let inverseDirection = {
 		'R': 'L', 
 		'L': 'R', 
@@ -148,25 +153,38 @@ function undo() {
 		'D': 'U', 
 		' ': ' '
 	}
-	if (logStack.length > 0) {
-		moveDirection(inverseDirection[logStack.pop()])
-		logStack.pop()
 
+	if (logStack.length > 0) {
+		// Update the log text only when the log text matches the 
+		// actions in the log stack
 		let log = document.getElementById("log")
 		let inverseLog = document.getElementById("inverseLog")
-		let lst = log.innerHTML.split('')
-		for (let i = 0; i < 2; i++) {
-			while (lst.length > 0 && lst[lst.length - 1] === ' ') {
+		if (log.innerHTML.replace(/\s/g, '').toUpperCase() === logStack.join('')) {
+			let lst = log.innerHTML.split('')
+			for (let i = 0; i < 2; i++) {
+				while (lst.length > 0 && lst[lst.length - 1] === ' ') {
+					lst.pop()
+				}
 				lst.pop()
 			}
-			lst.pop()
+			log.innerHTML = lst.join('')
+			lst = lst.reverse()
+			lst = lst.map((curr) => {
+				return inverseDirection[curr]
+			})
+			inverseLog.innerHTML = lst.join('')
+		} else {
+			console.log(logStack)
+			console.log(log.innerHTML)
 		}
-		log.innerHTML = lst.join('')
-		lst = lst.reverse()
-		lst = lst.map((curr) => {
-			return inverseDirection[curr]
-		})
-		inverseLog.innerHTML = lst.join('')
+
+
+		// Perform inverse move for the top element of the stack
+		moveDirection(inverseDirection[logStack.pop()])
+
+		// Performing inverse move will produce a record in the log stack
+		// So we need to pop out this extra one
+		logStack.pop()
 	}
 }
 
