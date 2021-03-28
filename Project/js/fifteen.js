@@ -43,6 +43,40 @@ window.onload = function() {
 			}
 		}
 	}
+
+	// document.getElementById("apply-inputbox-id").onkeydown = checkMoveSeq
+	document.getElementById("apply-inputbox-id").addEventListener("input", (event) => {
+		let textbox = document.getElementById("apply-inputbox-id")
+		let s = textbox.value
+		let validCharacters = [' ', 'r', 'u', 'd', 'l', 'R', 'U', 'D', 'L']
+		let isValid = true
+		for (let i = 0; i < s.length; i++) {
+			if (s[i] != ' ' 
+					&& s[i] != 'r'
+					&& s[i] != 'u'
+					&& s[i] != 'l'
+					&& s[i] != 'd'
+					&& s[i] != 'R'
+					&& s[i] != 'U'
+					&& s[i] != 'L'
+					&& s[i] != 'D') {
+				isValid = false
+				break
+			}
+		}
+
+		if (isValid) {
+			textbox.style.backgroundColor = ""
+			document.getElementById("apply-invalid-msg").innerHTML = ""
+			document.getElementById("apply-button").disabled = false
+		} else {
+			textbox.style.backgroundColor = "pink"
+			document.getElementById("apply-invalid-msg").innerHTML = "Invalid action detected"
+			document.getElementById("apply-button").disabled = true
+		}
+	})
+
+	document.getElementById("apply-button").onclick = apply
 }
 
 // Initialization -- Add tiles to the board
@@ -262,6 +296,16 @@ function checkSolved() {
 		alert("Congratulation!")
 	}
 } 
+
+// Check if the move sequence is valid
+function checkMoveSeq() {
+	console.log(this)
+}
+
+// Apply a move sequence
+function apply() {
+
+}
 
 function isMovable() {
 	isMovablePuzzle(this.id);
