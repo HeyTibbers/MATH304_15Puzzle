@@ -22,13 +22,11 @@ var imageSrc = "url('./imgs/background.jpg')"
 
 // attaches a function to the calculate button
 window.onload = function() {
-	addBlocks();
 	document.getElementById("shufflebutton").onclick = shuffle;
 	document.getElementById("reset-button").onclick = reset;
 	document.getElementById("undo-button").onclick = undo;
 	document.getElementById("picture-button").onclick = picture;
 	document.getElementById("help-button").onclick = help;
-	calcPermuation();
 	document.getElementById("move-log-switch").onclick = function() {
 		let switch_text = document.getElementById("switch-text")
 		let log_text_div = document.getElementsByClassName("log-text")
@@ -63,7 +61,16 @@ window.onload = function() {
 		}
 	})
 
+	document.getElementById("clear-log-button").onclick = () => {
+		if (confirm("Are you sure you want to clear all logs?")) {
+			clearLogs()
+		}
+	}
+
 	document.getElementById("apply-button").onclick = apply
+
+	addBlocks()
+	calcPermuation()
 }
 
 // Initialization -- Add tiles to the board
