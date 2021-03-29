@@ -8,6 +8,9 @@ var empty_y = 3;
 // Stack for move log
 var logStack = [];
 
+// Move log displayed on the page
+var logText = ""
+
 // Switch of move log
 var logOn = true;
 
@@ -138,6 +141,7 @@ function reset() {
 		container.removeChild(container.lastChild)
 	}
 	shuffled = false
+	logStack.splice(0, logStack.length)	// Clear out the log stack
 	clearLogs()
 	addBlocks()
 	calcPermuation()
@@ -151,33 +155,11 @@ function undo() {
 		'L': 'R', 
 		'U': 'D', 
 		'D': 'U', 
-		' ': ' '
+		' ': ' ', 
+		'P': 'P'
 	}
 
 	if (logStack.length > 0) {
-		// Update the log text only when the log text matches the 
-		// actions in the log stack
-		let log = document.getElementById("log")
-		let inverseLog = document.getElementById("inverseLog")
-		if (log.innerHTML.replace(/\s/g, '').toUpperCase() === logStack.join('')) {
-			let lst = log.innerHTML.split('')
-			for (let i = 0; i < 2; i++) {
-				while (lst.length > 0 && lst[lst.length - 1] === ' ') {
-					lst.pop()
-				}
-				lst.pop()
-			}
-			log.innerHTML = lst.join('')
-			lst = lst.reverse()
-			lst = lst.map((curr) => {
-				return inverseDirection[curr]
-			})
-			inverseLog.innerHTML = lst.join('')
-		} else {
-			console.log(logStack)
-			console.log(log.innerHTML)
-		}
-
 
 		// Perform inverse move for the top element of the stack
 		moveDirection(inverseDirection[logStack.pop()])
@@ -185,6 +167,13 @@ function undo() {
 		// Performing inverse move will produce a record in the log stack
 		// So we need to pop out this extra one
 		logStack.pop()
+
+		// Similarly, pop out the extra move log
+		let lst = logText.split('')
+		lst.pop()
+		logText = lst.join('')
+		log.innerHTML = logText.replace(/P/g, '')
+		inverseLog.innerHTML = getInverseLogText(logText)
 	}
 }
 
@@ -362,30 +351,50 @@ function addLog(puzzle) {
 	}
 	logStack.push(direction);
 
-	if (logOn == true) {
-		var log = document.getElementById("log")
-		var inverseLog = document.getElementById("inverseLog")
-		log.innerHTML += direction
-		inverseLog.innerHTML = inverseDirection + inverseLog.innerHTML
-	}
+	// Update log text
+	let log = document.getElementById("log")
+	let inverseLog = document.getElementById("inverseLog")
+	// If recording is on, add direction to the log text
+	// If recording is off, add a placeholder to the log text instead
+	logText += logOn ? direction : 'P'
+	log.innerHTML = logText.replace(/P/g, '')
+	inverseLog.innerHTML = getInverseLogText(logText)
 }
 
 // Clear out the move logs and log stack
 function clearLogs() {
-	// Clear out the log stack
-	logStack.splice(0, logStack.length)
+	// Clear log text
+	logText = ""
+	document.getElementById("log").innerHTML = ""
+	document.getElementById("inverseLog").innerHTML = ""
+}
 
-	let log = document.getElementById("log");
-	let inverseLog = document.getElementById("inverseLog")
-	log.innerHTML = "";
-	inverseLog.innerHTML = "";
+// Compute the inverse of the log
+function getInverseLogText(log) {
+	// Define inverse actions
+	let inverseDirection = {
+		'R': 'L', 
+		'L': 'R', 
+		'U': 'D', 
+		'D': 'U', 
+		' ': ' '
+	}
+
+	// Remove placeholders and split the string into a list
+	let lst = log.replace(/P/g, '').split('')
+
+	// Reverse the list
+	lst = lst.reverse()
+
+	// Convert them to the inverses of directions
+	return lst.map((x) => { return inverseDirection[x] }).join('')
 }
 
 function shuffle() {
 	shuffled = true
 
-	// Clear out the log stack, log and logInverse
-	clearLogs()
+	logStack.splice(0, logStack.length)		// Clear out the log stack
+	clearLogs()		// Clear out log text
 
 	let permutation = {}	// Permutation of the puzzle
 	let boxIndices = []		// Available boxes; Used for generating random permutation

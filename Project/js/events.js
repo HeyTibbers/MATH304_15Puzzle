@@ -3,16 +3,17 @@
 // This file contains event-related functions
 
 document.addEventListener("keypress", event => {
-	var log = document.getElementById("log");
-	var inverseLog = document.getElementById("inverseLog")
 
 	// Listen to the following key press events only when 
 	// the input box is not focused
 	if (document.activeElement != document.getElementById("apply-inputbox-id")) {
 		// Space -- Add a space to logs
 		if (event.keyCode === 32 && logOn == true) {
-			log.innerHTML += " "
-			inverseLog.innerHTML = " " + inverseLog.innerHTML
+			let log = document.getElementById("log");
+			let inverseLog = document.getElementById("inverseLog")
+			logText += ' '
+			log.innerHTML = logText.replace(/P/g, '')
+			inverseLog.innerHTML = getInverseLogText(logText)
 		}
 
 		// 'r' -- Move tile to the right
@@ -36,9 +37,10 @@ document.addEventListener("keypress", event => {
 		}
 
 		// 'c' -- Clear logs
-		if (event.keyCode === 99 && logOn == true) {
-			log.innerHTML = "";
-			inverseLog.innerHTML = "";
+		if (event.keyCode === 99) {
+			if (confirm("Are you sure you want to clear all logs?")) {
+				clearLogs()
+			}
 		}
 
 		// Ctrl + z -- Undo a move
