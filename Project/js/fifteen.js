@@ -69,6 +69,8 @@ window.onload = function() {
 
 	document.getElementById("apply-button").onclick = apply
 
+	document.getElementById("edit-button").onclick = edit
+
 	addBlocks()
 	calcPermuation()
 }
@@ -324,6 +326,61 @@ function apply() {
 		for (const move of sequence) {
 			moveDirection(move)
 		}
+	}
+}
+
+// // Check if the input from the edit box is valid
+// function isValidEdit() {
+// 	let textbox = document.getElementById("edit-inputbox-id")
+// 	let s = textbox.value
+// }
+
+// Edit the board
+function edit() {
+	let textbox = document.getElementById("edit-inputbox-id")
+	let s = textbox.value.replace(/\s/g, '')
+	let pattern = /^{(\d+:\d+,)*(\d+:\d+)}$/
+	let permutation = {}
+	// Check the format of input
+	if (pattern.test(s)) {
+		s = s.replace(/{|}/g, '')
+		let lst = s.split(',')
+
+		// Convert the string into an object
+		for (const pair_str of lst) {
+			let [key, val] = pair_str.split(':').map((x) => {
+				return parseInt(x)
+			})
+
+			// Check for invalid tile number
+			if (key < 1 || key > 16 || val < 1 || val > 16) {
+				// Invalid tile number
+				return
+			}
+			permutation[key] = val
+		}
+
+		// Make sure that it is a valid permutation (i.e., the 
+		// mapping is bijective)
+		// Just check if the set of keys is identical to the set
+		// of values
+		let keys = Object.keys(permutation).sort()
+		let vals = Object.values(permutation).sort()
+		if (keys.toString() != vals.toString()) {
+			// Invalid permutation
+			return
+		}
+
+		// Fill out the missing tile numbers
+		for (let i = 1; i <= 16; i++) {
+			if (!permutation[i]) {
+				permutation[i] = i
+			}
+		}
+
+	} else {
+		// Invalid input
+		return
 	}
 }
 
