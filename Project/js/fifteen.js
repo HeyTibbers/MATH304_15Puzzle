@@ -201,9 +201,11 @@ function picture() {
 	
 	if (imageSrc == "url('./imgs/background.jpg')") {
 		pictureButton.innerHTML = "Picture"
+		pictureButton.title = "Show picture"
 		imageSrc = "url('./imgs/number_grid.jpg')"
 	} else {
 		pictureButton.innerHTML = "Number"
+		pictureButton.title = "Show number"
 		imageSrc = "url('./imgs/background.jpg')"
 	}
 	for (var i = 0; i < 16; i++) {
@@ -438,10 +440,11 @@ function edit() {
 
 		// Fill out the missing tile numbers
 		for (let i = 0; i < 16; i++) {
-			if (!permutation[i]) {
+			if (permutation[i] === undefined) {
 				permutation[i] = i
 			}
 		}
+		console.log(permutation)
 
 		// Set the puzzle
 		if (confirm("This operation will overwrite the current configuration.\nAre you sure you want to continue?")) {

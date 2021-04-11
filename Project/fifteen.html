@@ -30,11 +30,11 @@
 			</div>
 
 			<div id="control-panel">
-				<button id="shufflebutton">Shuffle</button>
-				<button id="reset-button">Reset</button>
-				<button id="undo-button">Undo</button>
-				<button id="picture-button">Number</button>
-				<button id="help-button">Help</button>
+				<button id="shufflebutton" title="Shuffle the tiles">Shuffle</button>
+				<button id="reset-button" title="Reset the puzzle">Reset</button>
+				<button id="undo-button" title="Undo the last step">Undo</button>
+				<button id="picture-button" title="Show number">Number</button>
+				<button id="help-button" title="Display help information">Help</button>
 			</div>
 			
 			<div id="output"></div>
@@ -47,7 +47,7 @@
 						<input id="move-log-switch" type="checkbox" checked="true">
 						<span class="slider round"></span>
 					</label>
-					<button id="clear-log-button">Clear logs (C)</button>
+					<button id="clear-log-button" title="Clear all logs">Clear logs (C)</button>
 				</div>
 
 				<div class="log-text">Move Log:</div>
@@ -66,7 +66,7 @@
 					<textarea id="apply-inputbox-id" class="apply-inputbox" placeholder="e.g. R D L U"></textarea>
 					<br>
 					<div id="apply-invalid-msg"></div>
-					<button id="apply-button">Apply</button>
+					<button id="apply-button" title="Apply custom move sequence">Apply</button>
 				</div>
 
 				<div class="edit-input-container">
@@ -76,10 +76,10 @@
 						<textarea id="edit-inputbox-id" class="edit-inputbox" placeholder="e.g. {1: 2, 2: 3, 3: 1}"></textarea>
 						<br>
 						<div id="edit-invalid-msg"></div>
-						<button id="edit-button">Set</button>
-						<button id="import-button">Import</button>
+						<button id="edit-button" title="Edit the current configuration">Set</button>
+						<button id="import-button" title="Import an existing configuration from file">Import</button>
 						<input type="file" id="import-file-input" name="" hidden>
-						<button id="save-button">Save</button>
+						<button id="save-button" title="Save the current configuration to file">Save</button>
 					</div>
 				</div>
 			</div>
