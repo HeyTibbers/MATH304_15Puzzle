@@ -61,6 +61,11 @@ window.onload = function() {
 		}
 	})
 
+	document.getElementById("edit-inputbox-id").addEventListener("input", (event) => {
+		document.getElementById("edit-inputbox-id").style.backgroundColor = ""
+		document.getElementById("edit-invalid-msg").innerHTML = ""
+	})
+
 	document.getElementById("clear-log-button").onclick = () => {
 		if (confirm("Are you sure you want to clear all logs?")) {
 			clearLogs()
@@ -329,14 +334,49 @@ function apply() {
 	}
 }
 
-// // Check if the input from the edit box is valid
-// function isValidEdit() {
-// 	let textbox = document.getElementById("edit-inputbox-id")
-// 	let s = textbox.value
-// }
+// Set the puzzle to the given configuration
+function setPuzzle(permutation) {
+	console.log(permutation)
+	for (let i = 0; i < 16; i++) {
+		let box_num = i, tile_num = permutation[i + 1] - 1
+
+		// Generate new tile div
+		let tile_div = document.createElement("div")
+
+		if (tile_num == 15) {	// Special case: empty tile
+			tile_div.classList.add("empty")
+			// Update position of empty tile
+			empty_x = Math.floor(tile_num / 4)
+			empty_y = tile_num % 4
+		} else {		// Regular tiles
+			tile_div.classList.add("puzzle")
+			tile_div.style.backgroundImage = imageSrc
+		}
+
+		// Put the tile into the ramdonly selected box
+		let box = document.getElementById(num2boxID(box_num))
+
+		// Remove the old div from the box div
+		box.removeChild(box.lastChild)
+
+		tile_div.id = num2puzzleID(tile_num)
+		tile_div.onmouseover = isMovable
+		tile_div.onclick = move
+		tile_div.style.top = Math.floor(box_num / 4) * 100 + "px"
+		tile_div.style.left = (box_num % 4) * 100 + "px"
+		tile_div.style.backgroundPositionX = -(tile_num % 4) * 100 + "px"
+		tile_div.style.backgroundPositionY = -Math.floor(tile_num / 4) * 100 + "px"
+
+		// Add new div to the box div
+		box.appendChild(tile_div)
+	}
+}
 
 // Edit the board
 function edit() {
+	let msg_div = document.getElementById("edit-invalid-msg")
+	let edit_inputbox = document.getElementById("edit-inputbox-id")
+
 	let textbox = document.getElementById("edit-inputbox-id")
 	let s = textbox.value.replace(/\s/g, '')
 	let pattern = /^{(\d+:\d+,)*(\d+:\d+)}$/
@@ -352,9 +392,17 @@ function edit() {
 				return parseInt(x)
 			})
 
+			// Check for invalid box number
+			if (key < 1 || key > 16) {
+				edit_inputbox.style.backgroundColor = "pink"
+				msg_div.innerHTML = "Invalid box number detected in \"" + pair_str + "\""
+				return
+			}
 			// Check for invalid tile number
-			if (key < 1 || key > 16 || val < 1 || val > 16) {
+			if (val < 1 || val > 16) {
 				// Invalid tile number
+				edit_inputbox.style.backgroundColor = "pink"
+				msg_div.innerHTML = "Invalid tile number detected in \"" + pair_str + "\""
 				return
 			}
 			permutation[key] = val
@@ -368,6 +416,8 @@ function edit() {
 		let vals = Object.values(permutation).sort()
 		if (keys.toString() != vals.toString()) {
 			// Invalid permutation
+			edit_inputbox.style.backgroundColor = "pink"
+			msg_div.innerHTML = "Invalid permutation!"
 			return
 		}
 
@@ -378,8 +428,16 @@ function edit() {
 			}
 		}
 
+		// Set the puzzle
+		if (confirm("This operation will overwrite the current configuration.\nAre you sure you want to continue?")) {
+			reset()
+			setPuzzle(permutation)
+			calcPermuation()
+		}
 	} else {
 		// Invalid input
+		edit_inputbox.style.backgroundColor = "pink"
+		msg_div.innerHTML = "Invalid input format!"
 		return
 	}
 }
