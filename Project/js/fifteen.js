@@ -213,12 +213,23 @@ function picture() {
 
 // help alter 
 function help() {
-	var shortcut = "Shortcut Keys:"
-	var moveShortcut = "\n    'r': swap empty tile with right tile\n    'l': swap empty tile with left tile\n    'u': swap empty tile with up tile\n    'd': swap empty tile with down tile";
-	var clearLogShortcut = "\n    'c': clear move log"
-	var spaceLogShortcut = "\n    'Space': separate move log"
-	var undoShortcut = "\n    'Ctrl+z': undo a move"
-	alert(shortcut + moveShortcut + clearLogShortcut + spaceLogShortcut + undoShortcut);
+	let msg = "\
+Shortcut Keys:\
+\n    'r': Perform a right move\
+\n    'l': Perform a left move\
+\n    'u': Perform an up move\
+\n    'd': Perform a down move\
+\n    'c': Clear existing move logs\
+\n    'Space': Add a space to the move log\
+\n    'Ctrl+z': Undo the last move\
+\nFunctionalities:\
+\n    Apply: Apply custom move sequence\
+\n        e.g. A sequence of 'R', 'U', 'L', 'D' (Case-insensitive)\
+\n    Set: Set custom configuration\
+\n        e.g. {x:y, ...}: Put tile y into box x"
+	alert(
+		msg
+	)
 }
 
 // Move a tile based on a given direction.
