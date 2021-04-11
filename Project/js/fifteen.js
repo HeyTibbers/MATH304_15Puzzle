@@ -394,12 +394,14 @@ function edit() {
 	let msg_div = document.getElementById("edit-invalid-msg")
 	let edit_inputbox = document.getElementById("edit-inputbox-id")
 
+	let permutation = {}
 	let textbox = document.getElementById("edit-inputbox-id")
 	let s = textbox.value.replace(/\s/g, '')
-	let pattern = /^{(\d+:\d+,)*(\d+:\d+)}$/
-	let permutation = {}
+
+	let array_form_pattern = /^{(\d+:\d+,)*(\d+:\d+)}$/
+	let cycle_form_pattern = /^(\((\d+,)*(\d+)\))+$/
 	// Check the format of input
-	if (pattern.test(s)) {
+	if (array_form_pattern.test(s)) {
 		s = s.replace(/{|}/g, '')
 		let lst = s.split(',')
 
@@ -444,8 +446,47 @@ function edit() {
 				permutation[i] = i
 			}
 		}
-		console.log(permutation)
 
+		// Set the puzzle
+		if (confirm("This operation will overwrite the current configuration.\nAre you sure you want to continue?")) {
+			setPuzzle(permutation)
+		}
+	} else if (cycle_form_pattern.test(s)) {
+		let permutation = {}
+		for (let i = 0; i < 16; i++) {
+			permutation[i] = i
+		}
+		let cycles = s.replace(/\)/g, ') ').split(' ')
+		for (let cycle of cycles) {
+			if (cycle.length > 0) {
+				let nums = cycle.replace(/\(|\)/g, '').split(',').map((x) => { return parseInt(x) })
+
+				// All numbers have to be in the range [1, 16]
+				for (const x of nums) {
+					if (x < 1 || x > 16) {
+						// Invalid tile number
+						edit_inputbox.style.backgroundColor = "pink"
+						msg_div.innerHTML = "Invalid box number detected in " + cycle
+						return
+					}
+				}
+
+				// Contains duplicate
+				if ((new Set(nums)).size != nums.length) {
+					// Invalid cycle
+					edit_inputbox.style.backgroundColor = "pink"
+					msg_div.innerHTML = "Invalid cycle: " + cycle
+					return
+				}
+
+				// Apply the current cycle to 'permutation'
+				let tmp = permutation[nums[nums.length - 1] - 1]
+				for (let i = nums.length - 1; i >= 1; i--) {
+					permutation[nums[i] - 1] = permutation[nums[i - 1] - 1]
+				}
+				permutation[nums[0] - 1] = tmp
+			}
+		}
 		// Set the puzzle
 		if (confirm("This operation will overwrite the current configuration.\nAre you sure you want to continue?")) {
 			setPuzzle(permutation)
