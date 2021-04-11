@@ -76,6 +76,10 @@ window.onload = function() {
 
 	document.getElementById("edit-button").onclick = edit
 
+	document.getElementById("save-button").onclick = saveConfig
+
+	document.getElementById("import-button").onclick = importConfig
+
 	addBlocks()
 	calcPermuation()
 }
@@ -346,8 +350,9 @@ function apply() {
 
 // Set the puzzle to the given configuration
 function setPuzzle(permutation) {
+	reset()
 	for (let i = 0; i < 16; i++) {
-		let box_num = i, tile_num = permutation[i + 1] - 1
+		let box_num = i, tile_num = permutation[i]
 
 		// Generate new tile div
 		let tile_div = document.createElement("div")
@@ -355,8 +360,8 @@ function setPuzzle(permutation) {
 		if (tile_num == 15) {	// Special case: empty tile
 			tile_div.classList.add("empty")
 			// Update position of empty tile
-			empty_x = Math.floor(tile_num / 4)
-			empty_y = tile_num % 4
+			empty_x = Math.floor(box_num / 4)
+			empty_y = box_num % 4
 		} else {		// Regular tiles
 			tile_div.classList.add("puzzle")
 			tile_div.style.backgroundImage = imageSrc
@@ -379,6 +384,7 @@ function setPuzzle(permutation) {
 		// Add new div to the box div
 		box.appendChild(tile_div)
 	}
+	calcPermuation()
 }
 
 // Edit the board
@@ -414,7 +420,7 @@ function edit() {
 				msg_div.innerHTML = "Invalid tile number detected in \"" + pair_str + "\""
 				return
 			}
-			permutation[key] = val
+			permutation[key - 1] = val - 1
 		}
 
 		// Make sure that it is a valid permutation (i.e., the 
@@ -431,7 +437,7 @@ function edit() {
 		}
 
 		// Fill out the missing tile numbers
-		for (let i = 1; i <= 16; i++) {
+		for (let i = 0; i < 16; i++) {
 			if (!permutation[i]) {
 				permutation[i] = i
 			}
@@ -439,9 +445,7 @@ function edit() {
 
 		// Set the puzzle
 		if (confirm("This operation will overwrite the current configuration.\nAre you sure you want to continue?")) {
-			reset()
 			setPuzzle(permutation)
-			calcPermuation()
 		}
 	} else {
 		// Invalid input
@@ -449,6 +453,52 @@ function edit() {
 		msg_div.innerHTML = "Invalid input format!"
 		return
 	}
+}
+
+// Save the current configuration
+// Reference: https://robkendal.co.uk/blog/2020-04-17-saving-text-to-client-side-file-using-vanilla-js
+function saveConfig() {
+	let a = document.createElement('a')
+	let file = new Blob([JSON.stringify(getPermutation())], { type: "application/json" })
+	a.href = URL.createObjectURL(file)
+	a.download = 'Configuration.json'
+	a.click()
+	URL.revokeObjectURL(a.href)
+}
+
+// Import an existing configuration
+function importConfig() {
+	function handleFileSelect (e) {
+		let files = e.target.files
+		if (files.length < 1) {
+			alert('select a file...')
+			return
+		}
+		let file = files[0]
+		let reader = new FileReader()
+		reader.onload = onFileLoaded
+		reader.readAsDataURL(file)
+	}
+
+	function onFileLoaded (e) {
+		let match = /^data:(.*);base64,(.*)$/.exec(e.target.result)
+		if (match == null) {
+			throw 'Could not parse result'
+		}
+		let mimeType = match[1], content = match[2]
+		try {
+			let permutation = JSON.parse(atob(content))
+			// Set the puzzle
+			if (confirm("This operation will overwrite the current configuration.\nAre you sure you want to continue?")) {
+				setPuzzle(permutation)
+			}
+		} catch {
+			alert("Invalid file!")
+		}
+	}
+
+	document.getElementById("import-file-input").click()
+	document.getElementById("import-file-input").onchange = handleFileSelect
 }
 
 function isMovable() {
@@ -586,16 +636,9 @@ function shuffle() {
 	calcPermuation()
 }
 
+// Calculate and display the permutation of the current configuration
 function calcPermuation() {
-	// Select all the boxes
-	// Compare the box id's and the tile id's
-
-	let boxes = document.querySelectorAll(".box")
-	let permutation = {}
-
-	for (let i = 0; i < boxes.length; i++) {
-		permutation[puzzleID2num(boxes[i].lastChild.id)] = boxID2num(boxes[i].id)
-	}
+	let permutation = getPermutation()
 
 	// Run BFS to generate the cycle notation
 	let visited = {}, results = []
@@ -636,6 +679,21 @@ function calcPermuation() {
 	} else {
 		document.getElementById("permutation").innerText = results.join(' ')
 	}
+}
+
+// Return the permutation of the current configuration
+function getPermutation() {
+	// Select all the boxes
+	// Compare the box id's and the tile id's
+
+	let boxes = document.querySelectorAll(".box")
+	let permutation = {}
+
+	for (let i = 0; i < boxes.length; i++) {
+		permutation[puzzleID2num(boxes[i].lastChild.id)] = boxID2num(boxes[i].id)
+	}
+
+	return permutation
 }
 
 // Convert a puzzle id into a 0-indexed number

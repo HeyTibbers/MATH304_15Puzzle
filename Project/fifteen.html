@@ -70,12 +70,17 @@
 				</div>
 
 				<div class="edit-input-container">
-					Edit: 
+					Edit
 					<br>
-					<textarea id="edit-inputbox-id" class="edit-inputbox" placeholder="e.g. {1: 2, 2: 3, 3: 1}"></textarea>
-					<br>
-					<div id="edit-invalid-msg"></div>
-					<button id="edit-button">Set</button>
+					<div class="edit-input-sub-container">
+						<textarea id="edit-inputbox-id" class="edit-inputbox" placeholder="e.g. {1: 2, 2: 3, 3: 1}"></textarea>
+						<br>
+						<div id="edit-invalid-msg"></div>
+						<button id="edit-button">Set</button>
+						<button id="import-button">Import</button>
+						<input type="file" id="import-file-input" name="" hidden>
+						<button id="save-button">Save</button>
+					</div>
 				</div>
 			</div>
 			

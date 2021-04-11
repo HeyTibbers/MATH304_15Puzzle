@@ -5,10 +5,17 @@
 	margin-top: 30px;
 }
 
+.edit-input-sub-container {
+	text-align: left;
+	vertical-align: middle;
+	width: 85%;
+	display: inline-block;
+}
+
 .edit-inputbox {
 	text-align: left;
 	height: 25px;
-	width: 85%;
+	width: 100%;
 	margin-top: 10px;
 	margin-bottom: 5px;
 	padding: 5px;
@@ -19,6 +26,20 @@
 #edit-button {
 	margin-left: 0px;
 	background-color: #2196F3;
+	border-radius: 5px;
+	color: #ffffff;
+	padding: 0px;
+	width: 65px;
+	height: 30px;
+	font-weight: bold;
+	font-size: 15px;
+	font-family: "OpenSans", "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+#save-button, #import-button {
+	float: right;
+	margin-left: 30px;
+	background-color: #2ec866;
 	border-radius: 5px;
 	color: #ffffff;
 	padding: 0px;
