@@ -1,0 +1,41 @@
+
+.edit-input-container {
+	text-align: left;
+	vertical-align: middle;
+	margin-top: 30px;
+}
+
+.edit-inputbox {
+	text-align: left;
+	height: 25px;
+	width: 85%;
+	margin-top: 10px;
+	margin-bottom: 5px;
+	padding: 5px;
+	font-size: 20px;
+	font-family: "OpenSans", "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+#edit-button {
+	margin-left: 0px;
+	background-color: #2196F3;
+	border-radius: 5px;
+	color: #ffffff;
+	padding: 0px;
+	width: 65px;
+	height: 30px;
+	font-weight: bold;
+	font-size: 15px;
+	font-family: "OpenSans", "Roboto", "Helvetica", "Arial", sans-serif;
+}
+
+#edit-invalid-msg {
+	text-align: left;
+	color: red;
+	font-family: "OpenSans", "Roboto", "Helvetica", "Arial", sans-serif;
+	margin-bottom: 10px;
+}
+
+#edit-button:disabled {
+	background-color: grey;
+}
