@@ -6,7 +6,8 @@ document.addEventListener("keypress", event => {
 
 	// Listen to the following key press events only when 
 	// the input box is not focused
-	if (document.activeElement != document.getElementById("apply-inputbox-id")) {
+	if (document.activeElement != document.getElementById("apply-inputbox-id")
+			&& document.activeElement != document.getElementById("edit-inputbox-id")) {
 		// Space -- Add a space to logs
 		if (event.keyCode === 32 && logOn == true) {
 			let log = document.getElementById("log");

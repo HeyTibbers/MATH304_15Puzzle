@@ -302,12 +302,11 @@ function checkSolved() {
 // Check if the move sequence is valid
 function checkMoveSeq() {
 	let textbox = document.getElementById("apply-inputbox-id")
-	let s = textbox.value
-	let validCharacters = [' ', 'r', 'u', 'd', 'l', 'R', 'U', 'D', 'L']
+	let s = textbox.value.replace(/\s/g, '')
+	let validCharacters = ['r', 'u', 'd', 'l', 'R', 'U', 'D', 'L']
 	let isValid = true
 	for (let i = 0; i < s.length; i++) {
-		if (s[i] != ' ' 
-				&& s[i] != 'r'
+		if (s[i] != 'r'
 				&& s[i] != 'u'
 				&& s[i] != 'l'
 				&& s[i] != 'd'
@@ -336,7 +335,6 @@ function apply() {
 
 // Set the puzzle to the given configuration
 function setPuzzle(permutation) {
-	console.log(permutation)
 	for (let i = 0; i < 16; i++) {
 		let box_num = i, tile_num = permutation[i + 1] - 1
 
