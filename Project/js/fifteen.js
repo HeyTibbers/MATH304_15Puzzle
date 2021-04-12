@@ -690,9 +690,9 @@ function calcPermuation() {
 		visited[i] = false
 	}
 	for (let i = 0; i < 16; i++) {
-		if (!visited[i]) {
+		if (!visited[permutation[i]]) {
 			let curr_results = []
-			let queue = [i]
+			let queue = [permutation[i]]
 			while (queue.length > 0) {
 				let curr = queue.shift()
 				curr_results.push(curr)
@@ -713,6 +713,7 @@ function calcPermuation() {
 	//     And then convert them to strings
 	//     Combine those number together and add brackets on both sides
 	results = results.map((lst) => {
+		lst = lst.reverse()
 		return '(' + lst.map((x) => {
 			return (x + 1).toString()
 		}).join(', ') + ')'
@@ -734,7 +735,7 @@ function getPermutation() {
 	let permutation = {}
 
 	for (let i = 0; i < boxes.length; i++) {
-		permutation[puzzleID2num(boxes[i].lastChild.id)] = boxID2num(boxes[i].id)
+		permutation[boxID2num(boxes[i].id)] = puzzleID2num(boxes[i].lastChild.id)
 	}
 
 	return permutation
